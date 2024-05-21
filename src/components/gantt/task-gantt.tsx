@@ -101,7 +101,8 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
               x2={currentTimePosition}
               y2={barProps.rowHeight * barProps.uneducatedTasks.length}
               stroke="red"
-              strokeWidth={1}
+              strokeWidth={2}
+              strokeDasharray="8 8"
             />
           )}
         </svg>

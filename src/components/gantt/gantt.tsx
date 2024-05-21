@@ -237,7 +237,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     if (wrapperRef.current) {
       setSvgContainerWidth(wrapperRef.current.offsetWidth - taskListWidth);
     }
-  }, [wrapperRef, taskListWidth]);
+  }, [wrapperRef.current?.offsetWidth, taskListWidth]);
 
   useEffect(() => {
     if (ganttHeight) {

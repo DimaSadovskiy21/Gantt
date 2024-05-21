@@ -41,7 +41,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
     gridRows.push(
       <rect
         onMouseMove={setHoveredTaskId(
-          Array.isArray(task) ? task[0].id : task.id
+          Array.isArray(task) ? task?.[0]?.id : task.id
         )}
         onMouseLeave={setHoveredTaskId(null)}
         key={"Row" + (Array.isArray(task) ? task[0].id : task.id)}

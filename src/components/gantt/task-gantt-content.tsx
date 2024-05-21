@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { EventOption, Task } from "../../types/public-types";
 import { BarTask } from "../../types/bar-task";
 import { Arrow } from "../other/arrow";
@@ -61,6 +61,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   const [xStep, setXStep] = useState(0);
   const [initEventX1Delta, setInitEventX1Delta] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
+
+  const tasksMap = useMemo(
+    () => new Map(tasks.map(task => [task.id, task])),
+    [tasks]
+  );
 
   // create xStep
   useEffect(() => {
@@ -223,13 +228,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     }
     // Mouse Events
     else if (action === "mouseenter") {
-      if (!ganttEvent.action) {
-        setGanttEvent({
-          action,
-          changedTask: task,
-          originalSelectedTask: task,
-        });
-      }
+      setGanttEvent({
+        action,
+        changedTask: task,
+        originalSelectedTask: task,
+      });
     } else if (action === "mouseleave") {
       if (ganttEvent.action === "mouseenter") {
         setGanttEvent({ action: "" });
@@ -263,23 +266,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
   return (
     <g className="content">
-      <g className="arrows" fill={arrowColor} stroke={arrowColor}>
-        {tasks.map(task => {
-          return task.barChildren.map(child => {
-            return (
-              <Arrow
-                key={`Arrow from ${task.id} to ${tasks[child.index].id}`}
-                taskFrom={task}
-                taskTo={tasks[child.index]}
-                rowHeight={rowHeight}
-                taskHeight={taskHeight}
-                arrowIndent={arrowIndent}
-                rtl={rtl}
-              />
-            );
-          });
-        })}
-      </g>
       <g className="bar" fontFamily={fontFamily} fontSize={fontSize}>
         {tasks.map(task => {
           return (
@@ -296,6 +282,27 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
               rtl={rtl}
             />
           );
+        })}
+      </g>
+      <g className="arrows" fill={arrowColor} stroke={arrowColor}>
+        {tasks.map(task => {
+          return task.barChildren.map(child => {
+            const childTask = tasksMap.get(child.id);
+
+            if (!childTask) return null;
+
+            return (
+              <Arrow
+                key={`Arrow from ${task.id} to ${childTask.id}`}
+                taskFrom={task}
+                taskTo={childTask}
+                rowHeight={rowHeight}
+                taskHeight={taskHeight}
+                arrowIndent={arrowIndent}
+                rtl={rtl}
+              />
+            );
+          });
         })}
       </g>
     </g>
