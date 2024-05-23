@@ -30,6 +30,7 @@ export const TaskListTableDefault: React.FC<{
   tasks: Task[];
   selectedTaskId: string;
   setSelectedTask: (taskId: string) => void;
+  setHoveredTaskId: (id: string | null) => () => void;
   onExpanderClick: (task: Task) => void;
 }> = ({
   rowHeight,
