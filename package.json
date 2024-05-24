@@ -1,6 +1,6 @@
 {
   "name": "gantt-dima-test",
-  "version": "1.0.188",
+  "version": "1.0.195",
   "description": "Gantt Chart for React with TypeScript.",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

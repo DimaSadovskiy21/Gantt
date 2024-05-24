@@ -15,6 +15,10 @@
   stroke: #ebeff2;
 }
 
+.gridRowLineFirst {
+  stroke: #000000;
+}
+
 .gridTick {
   stroke: #e6e4e4;
 }
