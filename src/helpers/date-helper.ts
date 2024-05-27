@@ -78,15 +78,19 @@ export const ganttDateRange = (
     Array.isArray(task) ? task : [task]
   );
 
-  let newStartDate: Date = flattenedTasks[0].start;
-  let newEndDate: Date = flattenedTasks[0].end;
+  let newStartDate: Date = new Date(flattenedTasks[0].start);
+  let newEndDate: Date = new Date(flattenedTasks[0].end);
 
   for (const task of flattenedTasks) {
-    if (task.start < newStartDate) {
-      newStartDate = task.start;
+
+    const start = new Date(task.start);
+    const end = new Date(task.end);
+
+    if (start < newStartDate) {
+      newStartDate = start;
     }
-    if (task.end > newEndDate) {
-      newEndDate = task.end;
+    if (end > newEndDate) {
+      newEndDate = end;
     }
   }
 
@@ -184,6 +188,8 @@ export const seedDates = (
     }
     dates.push(currentDate);
   }
+
+
   return dates;
 };
 
