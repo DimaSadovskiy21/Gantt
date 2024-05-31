@@ -280,15 +280,25 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         }))
       );
 
-      const barTasksMap = new Map(barTasks.map((task) => [task.id, task]))
+      const barTasksMap = new Map(barTasks.map(task => [task.id, task]));
 
-      const hoveredBarTask = hoveredBarTaskId && barTasksMap.get(hoveredBarTaskId);
+      const hoveredBarTask =
+        hoveredBarTaskId && barTasksMap.get(hoveredBarTaskId);
 
-     hoveredBarTask
-       ? setGanttEvent({ action: "mouseenter", changedTask: hoveredBarTask })
-       : setGanttEvent({ action: "" });
+      hoveredBarTask
+        ? setGanttEvent({ action: "mouseenter", changedTask: hoveredBarTask })
+        : setGanttEvent({ action: "" });
     }
-  }, [ganttEvent, barTasks, barProgressColor, barProgressSelectedColor, barBackgroundColor, barBackgroundSelectedColor, hoveredBarTaskId, fieldFiltering]);
+  }, [
+    ganttEvent,
+    barTasks,
+    barProgressColor,
+    barProgressSelectedColor,
+    barBackgroundColor,
+    barBackgroundSelectedColor,
+    hoveredBarTaskId,
+    fieldFiltering,
+  ]);
 
   useEffect(() => {
     if (failedTask) {
@@ -455,8 +465,10 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       onExpanderClick({ ...task, hideChildren: !task.hideChildren });
     }
   };
-  const handleHoveredTask = (index: number | null) => () =>
+  const handleHoveredTask = (index: number | null) => () => {
+    if (ganttEvent.action === "move") return;
     setHoveredIndex(index);
+  };
 
   const gridProps: GridProps = {
     columnWidth,
@@ -550,30 +562,28 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
           columnWidth={columnWidth}
           dates={dateSetup.dates}
         />
-        {ganttEvent.changedTask &&
-          ganttEvent.action !==
-            "move" && (
-              <Tooltip
-                arrowIndent={arrowIndent}
-                rowHeight={rowHeight}
-                svgContainerHeight={svgContainerHeight}
-                svgContainerWidth={svgContainerWidth}
-                fontFamily={fontFamily}
-                fontSize={fontSize}
-                scrollX={scrollX}
-                scrollY={scrollY}
-                task={
-                  Array.isArray(ganttEvent.changedTask)
-                    ? ganttEvent.changedTask[0]
-                    : ganttEvent.changedTask
-                }
-                headerHeight={headerHeight}
-                taskListWidth={taskListWidth}
-                TooltipContent={TooltipContent}
-                rtl={rtl}
-                svgWidth={svgWidth}
-              />
-            )}
+        {ganttEvent.changedTask && ganttEvent.action !== "move" && (
+          <Tooltip
+            arrowIndent={arrowIndent}
+            rowHeight={rowHeight}
+            svgContainerHeight={svgContainerHeight}
+            svgContainerWidth={svgContainerWidth}
+            fontFamily={fontFamily}
+            fontSize={fontSize}
+            scrollX={scrollX}
+            scrollY={scrollY}
+            task={
+              Array.isArray(ganttEvent.changedTask)
+                ? ganttEvent.changedTask[0]
+                : ganttEvent.changedTask
+            }
+            headerHeight={headerHeight}
+            taskListWidth={taskListWidth}
+            TooltipContent={TooltipContent}
+            rtl={rtl}
+            svgWidth={svgWidth}
+          />
+        )}
         <VerticalScroll
           ganttFullHeight={ganttFullHeight}
           ganttHeight={ganttHeight}

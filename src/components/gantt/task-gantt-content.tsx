@@ -71,7 +71,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   const [isMoving, setIsMoving] = useState(false);
   const [project, setProject] = useState<number | null>(null);
   const [selectedItem, setSelectedItem] = useState<BarTask | null>(null);
-  
 
   const tasksMap = useMemo(
     () => new Map(tasks.map(task => [task.id, task])),
@@ -303,13 +302,62 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     }
   };
 
+   const getSelectedItemsIdSet = useCallback(() => {
+     const collectBarChildrenIds = (item: BarTask, idSet: Set<string>) => {
+       if (!item) return;
+
+       idSet.add(item.id);
+
+       if (item.barChildren?.length) {
+         item.barChildren.forEach(child => collectBarChildrenIds(child, idSet));
+       }
+     };
+
+     const collectDependencies = (
+       item: BarTask,
+       idSet: Set<string>,
+       tasksMap: Map<string, BarTask>
+     ) => {
+       if (!item) return;
+
+       if (item.dependencies?.length) {
+         item.dependencies.forEach(dependencyId => {
+           if (!idSet.has(dependencyId)) {
+             idSet.add(dependencyId);
+             const dependencyItem = tasksMap.get(dependencyId);
+             if (dependencyItem) {
+               collectDependencies(dependencyItem, idSet, tasksMap);
+             }
+           }
+         });
+       }
+     };
+
+     if (!selectedItem) return new Set() as Set<string>;
+
+     const selectedItemsIdSet: Set<string> = new Set();
+
+     collectBarChildrenIds(selectedItem, selectedItemsIdSet);
+
+     collectDependencies(selectedItem, selectedItemsIdSet, tasksMap);
+
+     return selectedItemsIdSet as Set<string>;
+   }, [selectedItem, tasksMap]);
+
+   const selectedItemsIdSet = useMemo(
+     () => getSelectedItemsIdSet(),
+     [getSelectedItemsIdSet]
+   );
+
   const getArrows = () => {
     const arrowElements = (
-      project || selectedItem?.projectId ? tasks : []
+      (project && ganttEvent.action !== "progress") ||
+      (selectedItem?.projectId && ganttEvent.action !== "progress") ||
+      ganttEvent.action === "move"
+        ? tasks
+        : []
     ).reduce(
       (acc, task) => {
-       
-
         task.barChildren.forEach(child => {
           const childTask = tasksMap.get(child.id);
 
@@ -321,13 +369,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
           )
             return;
 
-        
-
           const arrowElement = (
             <Arrow
               key={`Arrow from ${task.id} to ${childTask.id}`}
               taskFrom={task}
-              selectedItem={selectedItem}
+              isSelectedItem={selectedItemsIdSet.has(task.id)}
               taskTo={childTask}
               rowHeight={rowHeight}
               taskHeight={taskHeight}
@@ -336,7 +382,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             />
           );
 
-          if (selectedItem && task.id === selectedItem.id) {
+          if (selectedItemsIdSet.has(task.id)) {
             acc.selected.push(arrowElement);
           } else {
             acc.normal.push(arrowElement);
@@ -351,19 +397,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     return [...arrowElements.normal, ...arrowElements.selected];
   };
 
-  const getSelectedItemsIdSet = useCallback(() => {
-    if (!selectedItem) return new Set() as Set<string>;
-
-    const selectedItemsIdSet = new Set();
-
-    selectedItemsIdSet.add(selectedItem.id);
-
-    selectedItem.barChildren.forEach(child => selectedItemsIdSet.add(child.id));
-
-    return selectedItemsIdSet as Set<string>;
-  }, [selectedItem]);
-
-  const selectedItemsIdSet = useMemo(() => getSelectedItemsIdSet(), [getSelectedItemsIdSet]);
+ 
 
   return (
     <g className="content">
@@ -376,6 +410,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
               arrowIndent={arrowIndent}
               hoveredBarTaskId={hoveredBarTaskId}
               project={project}
+              action={ganttEvent.action}
               taskHeight={taskHeight}
               isProgressChangeable={!!onProgressChange && !task.isDisabled}
               isDateChangeable={!!onDateChange && !task.isDisabled}
