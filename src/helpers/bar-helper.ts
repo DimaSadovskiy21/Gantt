@@ -263,7 +263,7 @@ const convertToMilestone = (
   };
 };
 
-const taskXCoordinate = (xDate: Date, dates: Date[], columnWidth: number) => {
+export const taskXCoordinate = (xDate: Date, dates: Date[], columnWidth: number) => {
   const index = dates.findIndex(d => d.getTime() >= xDate.getTime()) - 1;
 
   const remainderMillis = xDate.getTime() - dates[index].getTime();
@@ -273,7 +273,7 @@ const taskXCoordinate = (xDate: Date, dates: Date[], columnWidth: number) => {
   return x;
 };
 
-const taskXCoordinateRTL = (
+export const taskXCoordinateRTL = (
   xDate: Date,
   dates: Date[],
   columnWidth: number
