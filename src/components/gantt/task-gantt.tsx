@@ -12,6 +12,7 @@ export type TaskGanttProps = {
   barProps: TaskGanttContentProps;
   ganttHeight: number;
   viewMode: ViewMode;
+  isLoading?: boolean;
   columnWidth: number;
   scrollY: number;
   scrollX: number;
@@ -27,19 +28,20 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   scrollY,
   scrollX,
   dates,
+  isLoading,
 }) => {
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   const verticalGanttContainerRef = useRef<HTMLDivElement>(null);
-  const newBarProps = { ...barProps, svg: ganttSVGRef, viewMode  };
+  const newBarProps = { ...barProps, svg: ganttSVGRef, viewMode };
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
-   const currentTimePosition = useMemo(
-     () =>
-       calculateCurrentTimePosition(dates, currentTime, viewMode, columnWidth),
-     [columnWidth, currentTime, dates, viewMode]
-   ); 
+  const currentTimePosition = useMemo(
+    () =>
+      calculateCurrentTimePosition(dates, currentTime, viewMode, columnWidth),
+    [columnWidth, currentTime, dates, viewMode]
+  );
 
   useEffect(() => {
     if (horizontalContainerRef.current) {
@@ -59,8 +61,6 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
     }, 60000);
     return () => clearInterval(timer);
   }, []);
-
- 
 
   return (
     <div
@@ -105,6 +105,13 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
               strokeDasharray="8 8"
             />
           )}
+          {isLoading && <g>
+            <rect
+              fill="rgba(0, 0, 0, 0.7)"
+              width={gridProps.svgWidth}
+              height={barProps.rowHeight * barProps.uneducatedTasks.length}
+            />
+          </g>}
         </svg>
       </div>
     </div>
