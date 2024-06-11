@@ -98,15 +98,6 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
 
   useEffect(() => {
     if (textRef.current) {
-      const isShowText =
-        viewMode !== ViewMode.Month &&
-        viewMode !== ViewMode.QuarterYear &&
-        viewMode !== ViewMode.Week &&
-        viewMode !== ViewMode.Year;
-      if (!isShowText) {
-        setTruncatedName("");
-        return;
-      }
       const font = window.getComputedStyle(textRef.current).font;
       const maxWidth = task.x2 - task.x1;
       const textWidth = measureTextWidth(task.name, font);
@@ -216,11 +207,11 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
         }}
         onMouseEnter={e => {
           if (task.isDisabled) return;
-            if (mainTask && !task.isDisabled) {
-              if (mainTask.id === task.id) return;
-              setChildTask(task);
-              return;
-            }
+          if (mainTask && !task.isDisabled) {
+            if (mainTask.id === task.id) return;
+            setChildTask(task);
+            return;
+          }
           onEventStart("mouseenter", task, e);
           setHoveredBarTaskId(task.id);
           task.projectId && setProject(task.projectId);
