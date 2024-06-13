@@ -27,7 +27,7 @@ export interface Task {
     progressSelectedColor?: string;
   };
   isDisabled?: boolean;
-  isInfo?: boolean; 
+  isInfo?: boolean;
   project?: string;
   dependencies?: string[];
   hideChildren?: boolean;
@@ -155,4 +155,14 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
   onDependency?: (taskFrom: Task, taskTo: Task) => void;
   trigger?: boolean;
   isLoading?: boolean;
+  isShowNonWorkingTime?: boolean;
+  shifts?: {
+    shiftTypes: {
+      startDate: string;
+      finishDate: string;
+      withDayOff: boolean;
+      isNextDayEnd: boolean;
+    }[];
+    index: number;
+  }[];
 }
