@@ -5,6 +5,7 @@ import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
 import styles from "./gantt.module.css";
 import { ViewMode } from "../../types/public-types";
 import { calculateCurrentTimePosition } from "../../helpers/other-helper";
+import Schedule from "../other/schedule";
 
 export type TaskGanttProps = {
   gridProps: GridProps;
@@ -17,6 +18,7 @@ export type TaskGanttProps = {
   scrollY: number;
   scrollX: number;
   dates: Date[];
+  ganttSchedule: JSX.Element[];
 };
 export const TaskGantt: React.FC<TaskGanttProps> = ({
   gridProps,
@@ -29,6 +31,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   scrollX,
   dates,
   isLoading,
+  ganttSchedule,
 }) => {
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
@@ -93,6 +96,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
           ref={ganttSVGRef}
         >
           <Grid {...gridProps} />
+          <Schedule ganttSchedule={ganttSchedule}/>
           <TaskGanttContent {...newBarProps} />
           {currentTimePosition && (
             <line
@@ -105,13 +109,15 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
               strokeDasharray="8 8"
             />
           )}
-          {isLoading && <g>
-            <rect
-              fill="rgba(0, 0, 0, 0.7)"
-              width={gridProps.svgWidth}
-              height={barProps.rowHeight * barProps.uneducatedTasks.length}
-            />
-          </g>}
+          {isLoading && (
+            <g>
+              <rect
+                fill="rgba(0, 0, 0, 0.7)"
+                width={gridProps.svgWidth}
+                height={barProps.rowHeight * barProps.uneducatedTasks.length}
+              />
+            </g>
+          )}
         </svg>
       </div>
     </div>
