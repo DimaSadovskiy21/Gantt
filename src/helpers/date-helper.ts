@@ -159,6 +159,9 @@ export const seedDates = (
 ) => {
   let currentDate: Date = new Date(startDate);
   const dates: Date[] = [currentDate];
+  const indexesMap: Map<string, number> = new Map()
+  let index = 0;
+  indexesMap.set(currentDate.toISOString(), index);
   while (currentDate < endDate) {
     switch (viewMode) {
       case ViewMode.Year:
@@ -187,10 +190,12 @@ export const seedDates = (
         break;
     }
     dates.push(currentDate);
+    index++;
+    indexesMap.set(currentDate.toISOString(), index);
   }
 
 
-  return dates;
+  return { dates, indexesMap };
 };
 
 export const getLocaleMonth = (date: Date, locale: string) => {

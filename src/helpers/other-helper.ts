@@ -1,6 +1,20 @@
 import { BarTask } from "../types/bar-task";
 import { Task, ViewMode } from "../types/public-types";
 
+
+ export const calculateVisibleDateIndices = (
+   scrollX: number,
+   columnWidth: number,
+   containerWidth: number
+ ) => {
+   const startIndex = Math.floor(scrollX / columnWidth);
+   const endIndex = Math.ceil((scrollX + containerWidth) / columnWidth);
+   return {
+     startIndex,
+     endIndex,
+   };
+ };
+
 export function isKeyboardEvent(
   event: React.MouseEvent | React.KeyboardEvent | React.FocusEvent
 ): event is React.KeyboardEvent {
@@ -12,6 +26,8 @@ export function isMouseEvent(
 ): event is React.MouseEvent {
   return (event as React.MouseEvent).clientX !== undefined;
 }
+
+
 
 export function isBarTask(task: Task | BarTask): task is BarTask {
   return (task as BarTask).x1 !== undefined;
@@ -127,3 +143,24 @@ export const calculateCurrentTimePosition = (
 
   return lineX;
 };
+
+
+ export function combineArraysFromSchedule(
+   schedule: Record<string, JSX.Element[]>,
+   startIndex: number,
+   endIndex: number
+ ) {
+   let resultArray = [] as JSX.Element[];
+
+   for (let key in schedule) {
+     if (schedule.hasOwnProperty(key)) {
+       const keyNum = parseInt(key, 10);
+
+       if (keyNum >= startIndex && keyNum <= endIndex) {
+         resultArray = resultArray.concat(schedule[key]);
+       }
+     }
+   }
+
+   return resultArray;
+ }

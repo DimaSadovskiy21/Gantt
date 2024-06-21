@@ -221,7 +221,7 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
           e.stopPropagation();
         }}
         onMouseEnter={e => {
-          if (action === "end" || action === 'move') return;
+          if (action === "end" || action === "move") return;
           if (task.isDisabled) return;
           if (mainTask && !task.isDisabled) {
             if (mainTask.id === task.id) return;
@@ -317,7 +317,6 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
             />
           )}
       </g>
-
       <g className="handleGroup">
         {isDateChangeable && action !== "progress" && (
           <BarDateHandle
