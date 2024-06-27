@@ -9,6 +9,15 @@ export enum ViewMode {
   QuarterYear = "QuarterYear",
   Year = "Year",
 }
+
+export enum Status {
+  pending,
+  inProgress,
+  done,
+  warning,
+  overdue,
+}
+
 export type TaskType = "task" | "milestone" | "project";
 export interface Task {
   id: string;
@@ -16,6 +25,7 @@ export interface Task {
   name: string;
   start: Date;
   end: Date;
+  status?: Status;
   /**
    * From 0 to 100
    */
@@ -87,6 +97,8 @@ export interface DisplayOption {
   locale?: string;
   rtl?: boolean;
 }
+
+
 
 export interface StylingOption {
   headerHeight?: number;
@@ -162,6 +174,11 @@ export interface NonWorkingPeriod {
   y: number;
 }
 
+export interface IGanttOrder {
+  projectId: number;
+  start: string;
+}
+
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
   tasks: (Task | Task[])[];
   fieldFiltering?: Record<string, any>;
@@ -170,4 +187,7 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
   trigger?: boolean;
   isLoading?: boolean;
   ganttSchedule: Record<string, JSX.Element[]>;
+  selectedProject: IGanttOrder | null;
+  isOverdueMode?: boolean;
+  isBehindScheduleMode?: boolean;
 }
